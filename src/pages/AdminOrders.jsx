@@ -6,13 +6,10 @@ export default function AdminOrders() {
   const [orders, setOrders] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
+  const [refreshing, setRefreshing] = useState(false);
   const navigate = useNavigate();
 
-  useEffect(() => {
-    fetchOrders();
-  }, []);
-
-  const fetchOrders = async () => {
+  const fetchOrders = async (showLoader = true) => {
     const token = localStorage.getItem("adminToken");
 
     if (!token) {
@@ -22,7 +19,12 @@ export default function AdminOrders() {
     }
 
     try {
-      setLoading(true);
+      if (showLoader) {
+        setLoading(true);
+      } else {
+        setRefreshing(true);
+      }
+
       setError("");
 
       const res = await fetch(`${API_BASE_URL}/api/orders`, {
@@ -41,18 +43,64 @@ export default function AdminOrders() {
 
       if (!res.ok) {
         const text = await res.text();
-        throw new Error(`Status ${res.status}: ${text}`);
+        throw new Error(text || "Failed to fetch orders.");
       }
 
       const data = await res.json();
-      console.log("Orders response:", data);
-
       setOrders(Array.isArray(data) ? data : []);
     } catch (err) {
       console.error("Error fetching orders:", err);
-      setError(err.message || "Failed to load orders.");
+      setError("Failed to load orders. Please try again.");
     } finally {
       setLoading(false);
+      setRefreshing(false);
+    }
+  };
+
+  useEffect(() => {
+    fetchOrders(true);
+
+    const interval = setInterval(() => {
+      fetchOrders(false);
+    }, 10000);
+
+    const handleVisibilityChange = () => {
+      if (document.visibilityState === "visible") {
+        fetchOrders(false);
+      }
+    };
+
+    document.addEventListener("visibilitychange", handleVisibilityChange);
+
+    return () => {
+      clearInterval(interval);
+      document.removeEventListener("visibilitychange", handleVisibilityChange);
+    };
+  }, []);
+
+  const getStatusClass = (status) => {
+    switch ((status || "").toLowerCase()) {
+      case "pending":
+        return "status-badge pending";
+      case "shipped":
+        return "status-badge shipped";
+      case "delivered":
+        return "status-badge delivered";
+      case "cancelled":
+        return "status-badge cancelled";
+      default:
+        return "status-badge";
+    }
+  };
+
+  const parseErrorMessage = async (res) => {
+    const text = await res.text();
+
+    try {
+      const data = JSON.parse(text);
+      return data.message || data.error || "Something went wrong.";
+    } catch {
+      return text || "Something went wrong.";
     }
   };
 
@@ -69,15 +117,28 @@ export default function AdminOrders() {
         body: JSON.stringify({ status }),
       });
 
-      if (!res.ok) {
-        const text = await res.text();
-        throw new Error(`Status ${res.status}: ${text}`);
+      if (res.status === 401 || res.status === 403) {
+        localStorage.removeItem("adminToken");
+        localStorage.removeItem("adminAuth");
+        navigate("/admin/login");
+        return;
       }
 
-      fetchOrders();
+      if (!res.ok) {
+        const message = await parseErrorMessage(res);
+        throw new Error(message);
+      }
+
+      const updatedOrder = await res.json();
+
+      setOrders((prevOrders) =>
+        prevOrders.map((order) =>
+          order.id === id ? updatedOrder : order
+        )
+      );
     } catch (err) {
       console.error("Error updating order status:", err);
-      alert("Failed to update status: " + err.message);
+      alert(err.message || "Failed to update order status.");
     }
   };
 
@@ -98,6 +159,12 @@ export default function AdminOrders() {
         <div className="admin-empty-state">
           <h3>Something went wrong</h3>
           <p>{error}</p>
+          <button
+            className="admin-refresh-btn"
+            onClick={() => fetchOrders(true)}
+          >
+            Try Again
+          </button>
         </div>
       </div>
     );
@@ -112,6 +179,13 @@ export default function AdminOrders() {
             Manage customer orders and update status.
           </p>
         </div>
+
+        <button
+          className="admin-refresh-btn"
+          onClick={() => fetchOrders(false)}
+        >
+          {refreshing ? "Refreshing..." : "Refresh Orders"}
+        </button>
       </div>
 
       {orders.length === 0 ? (
@@ -121,59 +195,89 @@ export default function AdminOrders() {
         </div>
       ) : (
         <div className="admin-orders-grid">
-          {orders.map((order) => (
-            <div key={order.id} className="admin-order-card">
-              <h3>Order #{order.id}</h3>
+          {orders.map((order) => {
+            const currentStatus = order.status || "Pending";
+            const lowerStatus = currentStatus.toLowerCase();
 
-              <p>
-                <strong>Name:</strong> {order.customerName}
-              </p>
-              <p>
-                <strong>Email:</strong> {order.email}
-              </p>
-              <p>
-                <strong>Address:</strong> {order.address}
-              </p>
-              <p>
-                <strong>Date:</strong>{" "}
-                {order.orderDate
-                  ? new Date(order.orderDate).toLocaleString()
-                  : "N/A"}
-              </p>
-              <p>
-                <strong>Total:</strong> ₹
-                {Number(order.totalAmount).toLocaleString("en-IN")}
-              </p>
+            const canCancel =
+              lowerStatus !== "cancelled" &&
+              lowerStatus !== "delivered" &&
+              lowerStatus !== "shipped";
 
-              <div className="order-items">
-                <strong>Items:</strong>
-                {order.items && order.items.length > 0 ? (
-                  order.items.map((item, index) => (
-                    <div key={index} className="order-item">
-                      <span>{item.productName}</span>
-                      <span>
-                        ₹{item.price} × {item.quantity}
-                      </span>
-                    </div>
-                  ))
-                ) : (
-                  <p>No items</p>
+            const disableSelect =
+              lowerStatus === "cancelled" || lowerStatus === "delivered";
+
+            return (
+              <div key={order.id} className="admin-order-card">
+                <div className="order-card-top">
+                  <h3>Order #{order.id}</h3>
+                  <span className={getStatusClass(currentStatus)}>
+                    {currentStatus}
+                  </span>
+                </div>
+
+                <p>
+                  <strong>Name:</strong> {order.customerName}
+                </p>
+                <p>
+                  <strong>Email:</strong> {order.email}
+                </p>
+                <p>
+                  <strong>Address:</strong> {order.address}
+                </p>
+                <p>
+                  <strong>Date:</strong>{" "}
+                  {order.orderDate
+                    ? new Date(order.orderDate).toLocaleString()
+                    : "N/A"}
+                </p>
+                <p>
+                  <strong>Total:</strong> ₹
+                  {Number(order.totalAmount || 0).toLocaleString("en-IN")}
+                </p>
+
+                <div className="order-items">
+                  <strong>Items:</strong>
+                  {order.items && order.items.length > 0 ? (
+                    order.items.map((item, index) => (
+                      <div key={index} className="order-item">
+                        <span>{item.productName}</span>
+                        <span>
+                          ₹{item.price} × {item.quantity}
+                        </span>
+                      </div>
+                    ))
+                  ) : (
+                    <p>No items</p>
+                  )}
+                </div>
+
+                <div className="order-status">
+                  <label htmlFor={`status-${order.id}`}>Update Status:</label>
+                  <select
+                    id={`status-${order.id}`}
+                    value={currentStatus}
+                    disabled={disableSelect}
+                    onChange={(e) => updateStatus(order.id, e.target.value)}
+                  >
+                    <option value="Pending">Pending</option>
+                    <option value="Shipped">Shipped</option>
+                    <option value="Delivered">Delivered</option>
+                    <option value="Cancelled">Cancelled</option>
+                  </select>
+                </div>
+
+                {canCancel && (
+                  <button
+                    className="cancel-order-btn"
+                    onClick={() => updateStatus(order.id, "Cancelled")}
+                  >
+                    Cancel Order
+                  </button>
                 )}
               </div>
-
-              <div className="order-status">
-                <label>Status:</label>
-                <select
-                  value={order.status || "Pending"}
-                  onChange={(e) => updateStatus(order.id, e.target.value)}
-                >
-                  <option value="Pending">Pending</option>
-                  <option value="Shipped">Shipped</option>
-                  <option value="Delivered">Delivered</option>
-                </select>
-              </div>
-            </div>
-          ))}
+            );
+          })}
         </div>
       )}
     </div>

@@ -1,6 +1,7 @@
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { useCart } from "../context/CartContext";
+import API_BASE_URL from "../api";
 
 export default function Checkout() {
   const navigate = useNavigate();
@@ -32,7 +33,7 @@ export default function Checkout() {
     }));
   };
 
-  const handlePlaceOrder = (e) => {
+  const handlePlaceOrder = async (e) => {
     e.preventDefault();
 
     if (cartItems.length === 0) {
@@ -55,18 +56,44 @@ export default function Checkout() {
       return;
     }
 
-    const orderData = {
-      customer: formData,
-      items: cartItems,
-      totalItems,
-      totalAmount,
-      orderedAt: new Date().toISOString(),
-    };
+    try {
+      const orderData = {
+        customerName: fullName,
+        email: email,
+        address: `${address}, ${city}, ${state} - ${pincode}`,
+        totalAmount: totalAmount,
+        items: cartItems.map((item) => ({
+          productId: item.id,
+          productName: item.name,
+          price: Number(item.price),
+          quantity: item.quantity,
+        })),
+      };
 
-    console.log("Order placed:", orderData);
+      console.log("Sending order:", orderData);
 
-    clearCart();
-    navigate("/order-success");
+      const res = await fetch(`${API_BASE_URL}/api/orders`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(orderData),
+      });
+
+      if (!res.ok) {
+        const text = await res.text();
+        throw new Error(text || "Order failed");
+      }
+
+      const data = await res.json();
+      console.log("Order saved:", data);
+
+      clearCart();
+      navigate("/order-success");
+    } catch (err) {
+      console.error("Order error:", err);
+      alert("Failed to place order: " + err.message);
+    }
   };
 
   return (
