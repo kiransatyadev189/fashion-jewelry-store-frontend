@@ -1,5 +1,6 @@
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
+import API_BASE_URL from "../api";
 
 export default function AdminLogin() {
   const [username, setUsername] = useState("");
@@ -13,8 +14,9 @@ export default function AdminLogin() {
 
     try {
       localStorage.removeItem("adminToken");
+      localStorage.removeItem("adminAuth");
 
-      const res = await fetch("https://jewelry-backend-docker.onrender.com/api/admin/login", {
+      const res = await fetch(`${API_BASE_URL}/api/admin/login`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
@@ -71,7 +73,11 @@ export default function AdminLogin() {
             required
           />
 
-          <button type="submit" className="admin-primary-btn" disabled={loading}>
+          <button
+            type="submit"
+            className="admin-primary-btn"
+            disabled={loading}
+          >
             {loading ? "Logging in..." : "Login"}
           </button>
         </form>

@@ -5,6 +5,7 @@ export default function AdminDashboard() {
 
   const handleLogout = () => {
     localStorage.removeItem("adminToken");
+    localStorage.removeItem("adminAuth");
     navigate("/admin/login");
   };
 
@@ -43,7 +44,7 @@ export default function AdminDashboard() {
 
             <Link to="/admin/orders" className="admin-card">
               <h3>🧾 Orders</h3>
-              <p>Track and update order status</p>
+              <p>Track and review customer orders</p>
             </Link>
           </div>
         </div>

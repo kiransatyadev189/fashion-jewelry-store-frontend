@@ -3,6 +3,8 @@ import { useParams } from "react-router-dom";
 import axios from "axios";
 import { useCart } from "../context/CartContext";
 
+const API_BASE_URL = import.meta.env.VITE_API_BASE_URL;
+
 export default function ProductDetails() {
   const { id } = useParams();
   const { addToCart } = useCart();
@@ -10,7 +12,7 @@ export default function ProductDetails() {
 
   useEffect(() => {
     axios
-      .get(`http://localhost:8080/api/products/${id}`)
+      .get(`${API_BASE_URL}/api/products/${id}`)
       .then((res) => {
         setProduct(res.data);
       })
@@ -30,12 +32,10 @@ export default function ProductDetails() {
   return (
     <div className="page product-details-page">
       <div className="product-details">
-        {/* IMAGE */}
         <div className="product-details-image">
           <img src={product.imageUrl} alt={product.name} />
         </div>
 
-        {/* INFO */}
         <div className="product-details-info">
           <h1>{product.name}</h1>
 

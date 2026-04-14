@@ -1,6 +1,7 @@
 import { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { useCart } from "../context/CartContext";
+import API_BASE_URL from "../api";
 
 export default function Checkout() {
   const { cartItems, clearCart } = useCart();
@@ -11,6 +12,8 @@ export default function Checkout() {
     email: "",
     address: "",
   });
+
+  const [loading, setLoading] = useState(false);
 
   const totalAmount = cartItems.reduce(
     (sum, item) => sum + item.price * item.quantity,
@@ -46,7 +49,9 @@ export default function Checkout() {
     };
 
     try {
-      const response = await fetch("http://localhost:8080/api/orders", {
+      setLoading(true);
+
+      const response = await fetch(`${API_BASE_URL}/api/orders`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
@@ -63,6 +68,8 @@ export default function Checkout() {
     } catch (error) {
       console.error("Order error:", error);
       alert("Something went wrong while placing the order.");
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -126,8 +133,8 @@ export default function Checkout() {
             />
           </div>
 
-          <button type="submit" className="place-order-btn">
-            Place Order
+          <button type="submit" className="place-order-btn" disabled={loading}>
+            {loading ? "Placing Order..." : "Place Order"}
           </button>
         </form>
 
@@ -150,7 +157,6 @@ export default function Checkout() {
           ))}
 
           <hr className="summary-divider" />
-
           <h4>Total: ₹{totalAmount.toLocaleString()}</h4>
         </div>
       </div>

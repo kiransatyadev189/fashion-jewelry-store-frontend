@@ -2,6 +2,8 @@ import { useState, useEffect } from "react";
 import axios from "axios";
 import ProductCard from "../components/ProductCard";
 
+const API_BASE_URL = import.meta.env.VITE_API_BASE_URL;
+
 export default function Shop() {
   const [products, setProducts] = useState([]);
   const [selectedCategory, setSelectedCategory] = useState("All");
@@ -10,7 +12,7 @@ export default function Shop() {
 
   useEffect(() => {
     axios
-      .get("http://localhost:8080/api/products")
+      .get(`${API_BASE_URL}/api/products`)
       .then((res) => {
         console.log("Backend products:", res.data);
         setProducts(res.data);
