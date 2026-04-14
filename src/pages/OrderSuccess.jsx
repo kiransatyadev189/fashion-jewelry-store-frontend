@@ -2,71 +2,40 @@ import { Link } from "react-router-dom";
 
 export default function OrderSuccess() {
   return (
-    <div
-      className="page success-page"
-      style={{
-        display: "flex",
-        justifyContent: "center",
-        alignItems: "center",
-        minHeight: "80vh",
-        padding: "20px",
-      }}
-    >
-      <div
-        className="success-card"
-        style={{
-          textAlign: "center",
-          padding: "30px",
-          borderRadius: "15px",
-          boxShadow: "0 4px 15px rgba(0,0,0,0.1)",
-          maxWidth: "500px",
-          width: "100%",
-        }}
-      >
-        {/* ✅ Success Icon */}
-        <div style={{ fontSize: "50px", marginBottom: "10px" }}>✅</div>
-
-        <h1>Order Placed Successfully</h1>
-
-        <p style={{ marginTop: "10px", color: "#555" }}>
-          Thank you for shopping with <strong>LuxeGlow Jewelry</strong>.
-        </p>
-
-        <p style={{ marginTop: "5px", color: "#777" }}>
-          Your order has been received and is being processed.
-        </p>
-
-        {/* 💡 Optional fake order ID */}
-        <p style={{ marginTop: "15px", fontSize: "14px", color: "#999" }}>
-          Order ID: #{Math.floor(Math.random() * 1000000)}
+    <div className="success-page">
+      <div className="success-card">
+        <p className="mini-title">Order Confirmed</p>
+        <h1>Thank You for Your Purchase</h1>
+        <p>
+          Your order has been placed successfully. We are getting your jewelry
+          ready with care and elegance. You will receive updates soon.
         </p>
 
         <div
-          className="success-actions"
           style={{
-            marginTop: "20px",
             display: "flex",
-            gap: "10px",
-            justifyContent: "center",
-            flexWrap: "wrap",
+            flexDirection: "column",
+            gap: "12px",
+            marginTop: "20px",
           }}
         >
           <Link to="/shop">
-            <button style={{ padding: "10px 18px", borderRadius: "8px" }}>
+            <button type="button" className="continue-shopping-btn">
               Continue Shopping
             </button>
           </Link>
 
           <Link to="/">
             <button
-              className="secondary-btn"
+              type="button"
+              className="continue-shopping-btn"
               style={{
-                padding: "10px 18px",
-                borderRadius: "8px",
-                backgroundColor: "#eee",
+                background: "transparent",
+                color: "#8a5a3b",
+                border: "1px solid #8a5a3b",
               }}
             >
-              Go to Home
+              Back to Home
             </button>
           </Link>
         </div>

@@ -1,5 +1,6 @@
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
+import API_BASE_URL from "../api";
 
 export default function AddProduct() {
   const navigate = useNavigate();
@@ -58,7 +59,7 @@ export default function AddProduct() {
 
     if (!token) {
       alert("Your session has expired. Please login again.");
-      navigate("/admin/login");
+      navigate("/admin");
       return;
     }
 
@@ -77,23 +78,21 @@ export default function AddProduct() {
       data.append("category", formData.category);
       data.append("image", image);
 
-      const res = await fetch(
-        "https://jewelry-backend-docker.onrender.com/api/products/with-image",
-        {
-          method: "POST",
-          headers: {
-            Authorization: `Bearer ${token}`,
-          },
-          body: data,
-        }
-      );
+      const res = await fetch(`${API_BASE_URL}/api/products/with-image`, {
+        method: "POST",
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+        body: data,
+      });
 
       const responseText = await res.text();
 
       if (res.status === 401 || res.status === 403) {
         alert("Unauthorized. Please login again.");
         localStorage.removeItem("adminToken");
-        navigate("/admin/login");
+        localStorage.removeItem("adminAuth");
+        navigate("/admin");
         return;
       }
 

@@ -1,52 +1,70 @@
-import { useState } from "react";
-import { Link, NavLink } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { useCart } from "../context/CartContext";
 
 export default function Navbar() {
   const { cartItems } = useCart();
-  const [menuOpen, setMenuOpen] = useState(false);
+  const navigate = useNavigate();
 
   const totalItems = cartItems.reduce((sum, item) => sum + item.quantity, 0);
 
-  const closeMenu = () => setMenuOpen(false);
+  const handleCategoryClick = (category) => {
+    navigate(`/shop?category=${encodeURIComponent(category)}`);
+  };
 
   return (
-    <nav className="navbar">
-      <div className="navbar-inner">
-        <Link to="/" className="brand-logo" onClick={closeMenu}>
-          LuxeGlow Jewelry
-        </Link>
+    <>
+      <div className="top-strip">
+        <p>Elegant Jewelry for Every Occasion ✨</p>
+      </div>
 
-        <button
-          className={`menu-toggle ${menuOpen ? "active" : ""}`}
-          onClick={() => setMenuOpen((prev) => !prev)}
-          aria-label="Toggle navigation menu"
-          aria-expanded={menuOpen}
-          type="button"
-        >
-          <span></span>
-          <span></span>
-          <span></span>
-        </button>
+      <nav className="navbar">
+        <div className="navbar-inner">
+          <Link to="/" className="brand-logo">
+            LuxeGlow
+          </Link>
 
-        <div className={`nav-links ${menuOpen ? "open" : ""}`}>
-          <NavLink to="/" onClick={closeMenu}>
-            Home
-          </NavLink>
+          <div className="nav-links">
+            <Link to="/">Home</Link>
+            <Link to="/shop">Shop</Link>
+            <Link to="/cart" className="cart-link">
+              Cart <span className="cart-badge">{totalItems}</span>
+            </Link>
+            <Link to="/checkout">Checkout</Link>
+          </div>
+        </div>
+      </nav>
 
-          <NavLink to="/shop" onClick={closeMenu}>
-            Shop
-          </NavLink>
+      <div className="category-scroll">
+        <div className="category-scroll-inner">
+          <button type="button" onClick={() => handleCategoryClick("New Arrivals")}>
+            New Arrivals
+          </button>
 
-          <NavLink to="/cart" className="cart-link" onClick={closeMenu}>
-            Cart <span className="cart-badge">{totalItems}</span>
-          </NavLink>
+          <button type="button" onClick={() => handleCategoryClick("Earring")}>
+            Earrings
+          </button>
 
-          <NavLink to="/checkout" onClick={closeMenu}>
-            Checkout
-          </NavLink>
+          <button type="button" onClick={() => handleCategoryClick("Necklace")}>
+            Necklaces
+          </button>
+
+          <button type="button" onClick={() => handleCategoryClick("Ring")}>
+            Rings
+          </button>
+
+          <button type="button" onClick={() => handleCategoryClick("Bracelet")}>
+            Bracelets
+          </button>
+
+          <button type="button" onClick={() => handleCategoryClick("Daily Wear")}>
+            Daily Wear
+          </button>
+
+          <button type="button" onClick={() => handleCategoryClick("Party Wear")}>
+            Party Wear
+          </button>
         </div>
       </div>
-    </nav>
+    </>
   );
 }

@@ -32,7 +32,7 @@ export default function AdminProducts() {
 
     if (!token) {
       alert("Session expired. Please login again.");
-      navigate("/admin/login");
+      navigate("/admin");
       return;
     }
 
@@ -50,7 +50,7 @@ export default function AdminProducts() {
         alert("Unauthorized. Please login again.");
         localStorage.removeItem("adminToken");
         localStorage.removeItem("adminAuth");
-        navigate("/admin/login");
+        navigate("/admin");
         return;
       }
 
@@ -68,7 +68,7 @@ export default function AdminProducts() {
   };
 
   const handleEdit = (id) => {
-    navigate(`/admin/edit-product/${id}`);
+    navigate(`/admin/edit/${id}`);
   };
 
   return (
@@ -82,7 +82,9 @@ export default function AdminProducts() {
         </div>
 
         <Link to="/admin/add-product">
-          <button className="admin-primary-btn">+ Add Product</button>
+          <button type="button" className="admin-primary-btn">
+            + Add Product
+          </button>
         </Link>
       </div>
 
@@ -119,6 +121,7 @@ export default function AdminProducts() {
 
               <div className="admin-card-actions">
                 <button
+                  type="button"
                   className="admin-secondary-btn"
                   onClick={() => handleEdit(p.id)}
                 >
@@ -126,6 +129,7 @@ export default function AdminProducts() {
                 </button>
 
                 <button
+                  type="button"
                   className="admin-danger-btn"
                   onClick={() => handleDelete(p.id)}
                 >

@@ -1,93 +1,77 @@
-import { Routes, Route } from "react-router-dom";
-import Home from "./pages/Home";
-import Shop from "./pages/Shop";
-import Cart from "./pages/Cart";
-import Checkout from "./pages/Checkout";
-import ProductDetails from "./pages/ProductDetails";
-import OrderSuccess from "./pages/OrderSuccess";
+import { useEffect, useState } from "react";
+import { Routes, Route, useLocation } from "react-router-dom";
+import axios from "axios";
 
 import Navbar from "./components/Navbar";
-import Footer from "./components/Footer";
+import Home from "./pages/Home";
+import Shop from "./pages/Shop";
+import ProductDetails from "./pages/ProductDetails";
+import Cart from "./pages/Cart";
+import Checkout from "./pages/Checkout";
+import OrderSuccess from "./pages/OrderSuccess";
 
 import AdminLogin from "./pages/AdminLogin";
 import AdminDashboard from "./pages/AdminDashboard";
-import AdminProducts from "./pages/AdminProducts";
 import AddProduct from "./pages/AddProduct";
-import EditProduct from "./pages/EditProduct";
+import AdminProducts from "./pages/AdminProducts";
 import AdminOrders from "./pages/AdminOrders";
-import AdminRoute from "./components/AdminRoute";
-
-function UserLayout() {
-  return (
-    <>
-      <Navbar />
-      <main className="site-content">
-        <Routes>
-          <Route path="/" element={<Home />} />
-          <Route path="/shop" element={<Shop />} />
-          <Route path="/cart" element={<Cart />} />
-          <Route path="/checkout" element={<Checkout />} />
-          <Route path="/product/:id" element={<ProductDetails />} />
-          <Route path="/order-success" element={<OrderSuccess />} />
-        </Routes>
-      </main>
-      <Footer />
-    </>
-  );
-}
+import EditProduct from "./pages/EditProduct";
 
 function App() {
+  const [products, setProducts] = useState([]);
+  const location = useLocation();
+
+  const API_BASE_URL =
+    import.meta.env.VITE_API_BASE_URL || "http://localhost:8080";
+
+  const isAdminPage = location.pathname.startsWith("/admin");
+
+  const fetchProducts = async () => {
+    try {
+      const res = await axios.get(`${API_BASE_URL}/api/products`);
+      setProducts(Array.isArray(res.data) ? res.data : []);
+    } catch (err) {
+      console.error("Error fetching products:", err);
+      setProducts([]);
+    }
+  };
+
+  useEffect(() => {
+    fetchProducts();
+  }, []);
+
   return (
-    <Routes>
-      <Route path="/admin/login" element={<AdminLogin />} />
+    <>
+      {!isAdminPage && <Navbar />}
 
-      <Route
-        path="/admin/dashboard"
-        element={
-          <AdminRoute>
-            <AdminDashboard />
-          </AdminRoute>
-        }
-      />
+      <Routes>
+        {/* User routes */}
+        <Route path="/" element={<Home products={products} />} />
+        <Route path="/shop" element={<Shop products={products} />} />
+        <Route path="/product/:id" element={<ProductDetails />} />
+        <Route path="/cart" element={<Cart />} />
+        <Route path="/checkout" element={<Checkout />} />
+        <Route path="/order-success" element={<OrderSuccess />} />
 
-      <Route
-        path="/admin/products"
-        element={
-          <AdminRoute>
-            <AdminProducts />
-          </AdminRoute>
-        }
-      />
+        {/* Admin routes */}
+        <Route path="/admin" element={<AdminLogin />} />
+        <Route path="/admin/login" element={<AdminLogin />} />
+        <Route path="/admin/dashboard" element={<AdminDashboard />} />
+        <Route path="/admin/add-product" element={<AddProduct />} />
+        <Route path="/admin/products" element={<AdminProducts />} />
+        <Route path="/admin/orders" element={<AdminOrders />} />
 
-      <Route
-        path="/admin/add-product"
-        element={
-          <AdminRoute>
-            <AddProduct />
-          </AdminRoute>
-        }
-      />
-
-      <Route
-        path="/admin/edit-product/:id"
-        element={
-          <AdminRoute>
-            <EditProduct />
-          </AdminRoute>
-        }
-      />
-
-      <Route
-        path="/admin/orders"
-        element={
-          <AdminRoute>
-            <AdminOrders />
-          </AdminRoute>
-        }
-      />
-
-      <Route path="/*" element={<UserLayout />} />
-    </Routes>
+        <Route
+          path="/admin/edit/:id"
+          element={
+            <EditProduct
+              fetchProducts={fetchProducts}
+              apiBaseUrl={API_BASE_URL}
+            />
+          }
+        />
+      </Routes>
+    </>
   );
 }
 

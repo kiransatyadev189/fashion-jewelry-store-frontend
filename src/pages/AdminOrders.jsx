@@ -5,219 +5,174 @@ import API_BASE_URL from "../api";
 export default function AdminOrders() {
   const [orders, setOrders] = useState([]);
   const [loading, setLoading] = useState(true);
-  const [updatingId, setUpdatingId] = useState(null);
+  const [error, setError] = useState("");
   const navigate = useNavigate();
-
-  const fetchOrders = async () => {
-    const token = localStorage.getItem("adminToken");
-
-    if (!token) {
-      alert("Session expired. Please login again.");
-      navigate("/admin/login");
-      setLoading(false);
-      return;
-    }
-
-    try {
-      const response = await fetch(`${API_BASE_URL}/api/orders`, {
-        headers: {
-          Authorization: `Bearer ${token}`,
-        },
-      });
-
-      if (response.status === 401 || response.status === 403) {
-        alert("Unauthorized. Please login again.");
-        localStorage.removeItem("adminToken");
-        navigate("/admin/login");
-        setLoading(false);
-        return;
-      }
-
-      if (!response.ok) {
-        throw new Error("Failed to fetch orders");
-      }
-
-      const data = await response.json();
-      setOrders(Array.isArray(data) ? data : []);
-    } catch (error) {
-      console.error("Failed to fetch orders:", error);
-      setOrders([]);
-    } finally {
-      setLoading(false);
-    }
-  };
 
   useEffect(() => {
     fetchOrders();
   }, []);
 
-  const updateStatus = async (orderId, newStatus) => {
+  const fetchOrders = async () => {
     const token = localStorage.getItem("adminToken");
 
     if (!token) {
-      alert("Session expired. Please login again.");
+      setError("Admin session expired. Please login again.");
       navigate("/admin/login");
       return;
     }
 
     try {
-      setUpdatingId(orderId);
+      setLoading(true);
+      setError("");
 
-      const response = await fetch(
-        `${API_BASE_URL}/api/orders/${orderId}/status`,
-        {
-          method: "PUT",
-          headers: {
-            "Content-Type": "application/json",
-            Authorization: `Bearer ${token}`,
-          },
-          body: JSON.stringify({ status: newStatus }),
-        }
-      );
+      const res = await fetch(`${API_BASE_URL}/api/orders`, {
+        method: "GET",
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      });
 
-      if (response.status === 401 || response.status === 403) {
-        alert("Unauthorized. Please login again.");
+      if (res.status === 401 || res.status === 403) {
         localStorage.removeItem("adminToken");
+        localStorage.removeItem("adminAuth");
         navigate("/admin/login");
         return;
       }
 
-      if (!response.ok) {
-        throw new Error("Failed to update order status");
+      if (!res.ok) {
+        const text = await res.text();
+        throw new Error(`Status ${res.status}: ${text}`);
       }
 
-      setOrders((prev) =>
-        prev.map((order) =>
-          order.id === orderId ? { ...order, status: newStatus } : order
-        )
-      );
-    } catch (error) {
-      console.error("Status update failed:", error);
-      alert("Could not update order status.");
+      const data = await res.json();
+      console.log("Orders response:", data);
+
+      setOrders(Array.isArray(data) ? data : []);
+    } catch (err) {
+      console.error("Error fetching orders:", err);
+      setError(err.message || "Failed to load orders.");
     } finally {
-      setUpdatingId(null);
+      setLoading(false);
+    }
+  };
+
+  const updateStatus = async (id, status) => {
+    const token = localStorage.getItem("adminToken");
+
+    try {
+      const res = await fetch(`${API_BASE_URL}/api/orders/${id}/status`, {
+        method: "PUT",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${token}`,
+        },
+        body: JSON.stringify({ status }),
+      });
+
+      if (!res.ok) {
+        const text = await res.text();
+        throw new Error(`Status ${res.status}: ${text}`);
+      }
+
+      fetchOrders();
+    } catch (err) {
+      console.error("Error updating order status:", err);
+      alert("Failed to update status: " + err.message);
     }
   };
 
   if (loading) {
     return (
-      <div className="page admin-orders-page">
-        <div className="admin-page-header">
-          <div>
-            <h2 className="admin-page-title">Admin Orders</h2>
-            <p className="admin-page-subtitle">Loading orders...</p>
-          </div>
+      <div className="page admin-page">
+        <div className="admin-empty-state">
+          <h3>Loading orders...</h3>
+          <p>Please wait while orders are being fetched.</p>
+        </div>
+      </div>
+    );
+  }
+
+  if (error) {
+    return (
+      <div className="page admin-page">
+        <div className="admin-empty-state">
+          <h3>Something went wrong</h3>
+          <p>{error}</p>
         </div>
       </div>
     );
   }
 
   return (
-    <div className="page admin-orders-page">
+    <div className="page admin-page">
       <div className="admin-page-header">
         <div>
-          <h2 className="admin-page-title">Admin Orders</h2>
+          <h1 className="admin-page-title">Orders</h1>
           <p className="admin-page-subtitle">
-            Track and update customer orders.
+            Manage customer orders and update status.
           </p>
         </div>
       </div>
 
       {orders.length === 0 ? (
         <div className="admin-empty-state">
-          <h3>No orders found</h3>
-          <p>Orders will appear here once customers place them.</p>
+          <h3>No Orders Found</h3>
+          <p>Orders will appear here after checkout.</p>
         </div>
       ) : (
-        <div className="orders-list">
+        <div className="admin-orders-grid">
           {orders.map((order) => (
-            <article key={order.id} className="order-card">
-              <div className="order-top">
-                <div className="order-top-left">
-                  <h3 className="order-id">Order #{order.id}</h3>
-                  <p className="order-date">
-                    {order.orderDate
-                      ? new Date(order.orderDate).toLocaleString()
-                      : "N/A"}
-                  </p>
-                </div>
+            <div key={order.id} className="admin-order-card">
+              <h3>Order #{order.id}</h3>
 
-                <span
-                  className={`status-badge status-${(
-                    order.status || "pending"
-                  ).toLowerCase()}`}
-                >
-                  {order.status || "Pending"}
-                </span>
-              </div>
+              <p>
+                <strong>Name:</strong> {order.customerName}
+              </p>
+              <p>
+                <strong>Email:</strong> {order.email}
+              </p>
+              <p>
+                <strong>Address:</strong> {order.address}
+              </p>
+              <p>
+                <strong>Date:</strong>{" "}
+                {order.orderDate
+                  ? new Date(order.orderDate).toLocaleString()
+                  : "N/A"}
+              </p>
+              <p>
+                <strong>Total:</strong> ₹
+                {Number(order.totalAmount).toLocaleString("en-IN")}
+              </p>
 
-              <div className="order-details-list">
-                <div className="detail-row">
-                  <span className="detail-label">Name</span>
-                  <span className="detail-value">{order.customerName}</span>
-                </div>
-
-                <div className="detail-row">
-                  <span className="detail-label">Email</span>
-                  <span className="detail-value">{order.email}</span>
-                </div>
-
-                <div className="detail-row">
-                  <span className="detail-label">Address</span>
-                  <span className="detail-value">{order.address}</span>
-                </div>
-
-                <div className="detail-row">
-                  <span className="detail-label">Total</span>
-                  <span className="detail-value">
-                    ₹{Number(order.totalAmount || 0).toLocaleString("en-IN", {
-                      minimumFractionDigits: 2,
-                      maximumFractionDigits: 2,
-                    })}
-                  </span>
-                </div>
-              </div>
-
-              <div className="order-items-box">
-                <h4>Items</h4>
-
-                {order.items?.length > 0 ? (
-                  order.items.map((item) => (
-                    <div key={item.id} className="order-item-row">
-                      <div className="item-left">
-                        <span className="item-name">{item.productName}</span>
-                      </div>
-
-                      <div className="item-right">
-                        {item.quantity} × ₹
-                        {Number(item.price || 0).toLocaleString("en-IN", {
-                          minimumFractionDigits: 2,
-                          maximumFractionDigits: 2,
-                        })}
-                      </div>
+              <div className="order-items">
+                <strong>Items:</strong>
+                {order.items && order.items.length > 0 ? (
+                  order.items.map((item, index) => (
+                    <div key={index} className="order-item">
+                      <span>{item.productName}</span>
+                      <span>
+                        ₹{item.price} × {item.quantity}
+                      </span>
                     </div>
                   ))
                 ) : (
-                  <p className="no-items-text">No items found.</p>
+                  <p>No items</p>
                 )}
               </div>
 
-              <div className="order-actions">
-                <label htmlFor={`status-${order.id}`}>Update Status</label>
-
+              <div className="order-status">
+                <label>Status:</label>
                 <select
-                  id={`status-${order.id}`}
                   value={order.status || "Pending"}
                   onChange={(e) => updateStatus(order.id, e.target.value)}
-                  disabled={updatingId === order.id}
                 >
                   <option value="Pending">Pending</option>
-                  <option value="Confirmed">Confirmed</option>
                   <option value="Shipped">Shipped</option>
                   <option value="Delivered">Delivered</option>
                 </select>
               </div>
-            </article>
+            </div>
           ))}
         </div>
       )}

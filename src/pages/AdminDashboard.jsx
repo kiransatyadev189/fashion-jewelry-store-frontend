@@ -4,50 +4,41 @@ export default function AdminDashboard() {
   const navigate = useNavigate();
 
   const handleLogout = () => {
-    localStorage.removeItem("adminToken");
     localStorage.removeItem("adminAuth");
+    localStorage.removeItem("adminToken");
     navigate("/admin/login");
   };
 
   return (
-    <div className="page admin-dashboard-page">
-      <div className="admin-dashboard-container">
-        <div className="admin-header">
-          <div>
-            <h2>LuxeGlow Admin Panel</h2>
-            <p className="admin-header-subtext">
-              Manage your jewelry store from one place.
-            </p>
-          </div>
-
-          <button className="admin-danger-btn" onClick={handleLogout}>
-            Logout
-          </button>
-        </div>
-
-        <div className="admin-content">
-          <h1 className="admin-page-title">Dashboard</h1>
+    <div className="page admin-page">
+      <div className="admin-page-header">
+        <div>
+          <h1 className="admin-page-title">Admin Dashboard</h1>
           <p className="admin-page-subtitle">
-            Manage your jewelry business from here.
+            Manage products, add new items, and check orders.
           </p>
-
-          <div className="admin-cards">
-            <Link to="/admin/products" className="admin-card">
-              <h3>📦 Products</h3>
-              <p>View, edit, and delete products</p>
-            </Link>
-
-            <Link to="/admin/add-product" className="admin-card">
-              <h3>➕ Add Product</h3>
-              <p>Add new jewelry items</p>
-            </Link>
-
-            <Link to="/admin/orders" className="admin-card">
-              <h3>🧾 Orders</h3>
-              <p>Track and review customer orders</p>
-            </Link>
-          </div>
         </div>
+
+        <button type="button" className="logout-btn" onClick={handleLogout}>
+          Logout
+        </button>
+      </div>
+
+      <div className="admin-dashboard-grid">
+        <Link to="/admin/products" className="admin-dashboard-card">
+          <h3>Products</h3>
+          <p>View, edit, and delete your jewelry products.</p>
+        </Link>
+
+        <Link to="/admin/add-product" className="admin-dashboard-card">
+          <h3>Add Product</h3>
+          <p>Create and upload a new product to your catalog.</p>
+        </Link>
+
+        <Link to="/admin/orders" className="admin-dashboard-card">
+          <h3>Orders</h3>
+          <p>Track customer orders and manage order updates.</p>
+        </Link>
       </div>
     </div>
   );
