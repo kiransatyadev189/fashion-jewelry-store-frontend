@@ -82,14 +82,37 @@ export default function AdminOrders() {
     switch ((status || "").toLowerCase()) {
       case "pending":
         return "status-badge pending";
+      case "confirmed":
+        return "status-badge confirmed";
       case "shipped":
         return "status-badge shipped";
+      case "out for delivery":
+        return "status-badge out-for-delivery";
       case "delivered":
         return "status-badge delivered";
       case "cancelled":
         return "status-badge cancelled";
       default:
         return "status-badge";
+    }
+  };
+
+  const getStatusIcon = (status) => {
+    switch ((status || "").toLowerCase()) {
+      case "pending":
+        return "🟠";
+      case "confirmed":
+        return "🔵";
+      case "shipped":
+        return "🚚";
+      case "out for delivery":
+        return "📦";
+      case "delivered":
+        return "✅";
+      case "cancelled":
+        return "❌";
+      default:
+        return "📌";
     }
   };
 
@@ -139,6 +162,13 @@ export default function AdminOrders() {
     } catch (err) {
       console.error("Error updating order status:", err);
       alert(err.message || "Failed to update order status.");
+    }
+  };
+
+  const handleStatusChange = (id, newStatus) => {
+    const confirmed = window.confirm(`Change status to "${newStatus}"?`);
+    if (confirmed) {
+      updateStatus(id, newStatus);
     }
   };
 
@@ -200,9 +230,7 @@ export default function AdminOrders() {
             const lowerStatus = currentStatus.toLowerCase();
 
             const canCancel =
-              lowerStatus !== "cancelled" &&
-              lowerStatus !== "delivered" &&
-              lowerStatus !== "shipped";
+              lowerStatus === "pending" || lowerStatus === "confirmed";
 
             const disableSelect =
               lowerStatus === "cancelled" || lowerStatus === "delivered";
@@ -212,7 +240,7 @@ export default function AdminOrders() {
                 <div className="order-card-top">
                   <h3>Order #{order.id}</h3>
                   <span className={getStatusClass(currentStatus)}>
-                    {currentStatus}
+                    {getStatusIcon(currentStatus)} {currentStatus}
                   </span>
                 </div>
 
@@ -258,10 +286,14 @@ export default function AdminOrders() {
                     id={`status-${order.id}`}
                     value={currentStatus}
                     disabled={disableSelect}
-                    onChange={(e) => updateStatus(order.id, e.target.value)}
+                    onChange={(e) =>
+                      handleStatusChange(order.id, e.target.value)
+                    }
                   >
                     <option value="Pending">Pending</option>
+                    <option value="Confirmed">Confirmed</option>
                     <option value="Shipped">Shipped</option>
+                    <option value="Out for Delivery">Out for Delivery</option>
                     <option value="Delivered">Delivered</option>
                     <option value="Cancelled">Cancelled</option>
                   </select>
@@ -270,7 +302,7 @@ export default function AdminOrders() {
                 {canCancel && (
                   <button
                     className="cancel-order-btn"
-                    onClick={() => updateStatus(order.id, "Cancelled")}
+                    onClick={() => handleStatusChange(order.id, "Cancelled")}
                   >
                     Cancel Order
                   </button>

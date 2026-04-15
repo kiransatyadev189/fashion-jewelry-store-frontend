@@ -1645,3 +1645,69 @@ button {
 .cancel-order-btn:hover {
   opacity: 0.9;
 }
+.status-badge {
+  display: inline-block;
+  padding: 6px 12px;
+  border-radius: 999px;
+  font-size: 12px;
+  font-weight: 700;
+  color: white;
+}
+
+.status-badge.pending {
+  background: #f59e0b;
+}
+
+.status-badge.confirmed {
+  background: #2563eb;
+}
+
+.status-badge.shipped {
+  background: #7c3aed;
+}
+
+.status-badge.out-for-delivery {
+  background: #db2777;
+}
+
+.status-badge.delivered {
+  background: #16a34a;
+}
+
+.status-badge.cancelled {
+  background: #dc2626;
+}
+.status-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 6px 12px;
+  border-radius: 999px;
+  font-size: 12px;
+  font-weight: 700;
+  color: white;
+}
+
+.status-badge.pending {
+  background: #f59e0b;
+}
+
+.status-badge.confirmed {
+  background: #2563eb;
+}
+
+.status-badge.shipped {
+  background: #7c3aed;
+}
+
+.status-badge.out-for-delivery {
+  background: #db2777;
+}
+
+.status-badge.delivered {
+  background: #16a34a;
+}
+
+.status-badge.cancelled {
+  background: #dc2626;
+}
