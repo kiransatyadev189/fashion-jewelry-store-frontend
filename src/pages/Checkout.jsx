@@ -89,7 +89,10 @@ export default function Checkout() {
       console.log("Order saved:", data);
 
       clearCart();
-      navigate("/order-success");
+
+      navigate("/order-success", {
+        state: { orderId: data.id },
+      });
     } catch (err) {
       console.error("Order error:", err);
       alert("Failed to place order: " + err.message);

@@ -1,8 +1,11 @@
 import { useState } from "react";
+import { useLocation } from "react-router-dom";
 import API_BASE_URL from "../api";
 
 export default function TrackOrder() {
-  const [orderId, setOrderId] = useState("");
+  const location = useLocation();
+
+  const [orderId, setOrderId] = useState(location.state?.orderId || "");
   const [email, setEmail] = useState("");
   const [order, setOrder] = useState(null);
   const [error, setError] = useState("");
