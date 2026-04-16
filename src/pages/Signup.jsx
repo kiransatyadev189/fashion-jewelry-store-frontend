@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { useNavigate, Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import API_BASE_URL from "../api";
 
 export default function Signup() {
@@ -11,26 +11,21 @@ export default function Signup() {
     password: "",
   });
 
+  const [message, setMessage] = useState("");
+  const [isError, setIsError] = useState(false);
   const [loading, setLoading] = useState(false);
-  const [error, setError] = useState("");
-  const [success, setSuccess] = useState("");
 
   const handleChange = (e) => {
-    setFormData((prev) => ({
-      ...prev,
+    setFormData({
+      ...formData,
       [e.target.name]: e.target.value,
-    }));
+    });
   };
 
   const handleSignup = async (e) => {
     e.preventDefault();
-    setError("");
-    setSuccess("");
-
-    if (!formData.name || !formData.email || !formData.password) {
-      setError("Please fill all fields");
-      return;
-    }
+    setMessage("");
+    setIsError(false);
 
     try {
       setLoading(true);
@@ -43,21 +38,22 @@ export default function Signup() {
         body: JSON.stringify(formData),
       });
 
-      const data = await res.json();
+      const text = await res.text();
 
       if (!res.ok) {
-        throw new Error(data.message || "Signup failed");
+        throw new Error(text || "Signup failed");
       }
 
-      localStorage.setItem("userToken", data.token);
-      localStorage.setItem("userName", data.name);
-      localStorage.setItem("userEmail", data.email);
-      localStorage.setItem("userRole", data.role);
+      setMessage(text || "Signup successful");
+      setIsError(false);
 
-      setSuccess("Signup successful");
-      navigate("/");
+      setTimeout(() => {
+        navigate("/login");
+      }, 1200);
     } catch (err) {
-      setError(err.message || "Signup failed");
+      console.error("Signup error:", err);
+      setMessage(err.message || "Signup failed");
+      setIsError(true);
     } finally {
       setLoading(false);
     }
@@ -67,7 +63,9 @@ export default function Signup() {
     <div className="page auth-page">
       <div className="auth-card">
         <h2>Create Account</h2>
-        <p className="auth-subtext">Sign up to manage your orders and profile.</p>
+        <p className="auth-subtext">
+          Sign up to manage your orders and profile.
+        </p>
 
         <form onSubmit={handleSignup} className="auth-form">
           <input
@@ -76,6 +74,7 @@ export default function Signup() {
             placeholder="Full Name"
             value={formData.name}
             onChange={handleChange}
+            required
           />
 
           <input
@@ -84,6 +83,7 @@ export default function Signup() {
             placeholder="Email Address"
             value={formData.email}
             onChange={handleChange}
+            required
           />
 
           <input
@@ -92,15 +92,19 @@ export default function Signup() {
             placeholder="Password"
             value={formData.password}
             onChange={handleChange}
+            required
           />
 
           <button type="submit" disabled={loading}>
-            {loading ? "Creating Account..." : "Sign Up"}
+            {loading ? "Signing Up..." : "Sign Up"}
           </button>
         </form>
 
-        {error && <p className="auth-error">{error}</p>}
-        {success && <p className="auth-success">{success}</p>}
+        {message && (
+          <p className={isError ? "auth-error" : "auth-success"}>
+            {message}
+          </p>
+        )}
 
         <p className="auth-switch">
           Already have an account? <Link to="/login">Login</Link>
