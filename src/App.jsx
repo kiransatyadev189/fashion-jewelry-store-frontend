@@ -10,6 +10,8 @@ import Cart from "./pages/Cart";
 import Checkout from "./pages/Checkout";
 import OrderSuccess from "./pages/OrderSuccess";
 import TrackOrder from "./pages/TrackOrder";
+import Signup from "./pages/Signup";
+import Login from "./pages/Login";
 
 import AdminLogin from "./pages/AdminLogin";
 import AdminDashboard from "./pages/AdminDashboard";
@@ -17,6 +19,8 @@ import AddProduct from "./pages/AddProduct";
 import AdminProducts from "./pages/AdminProducts";
 import AdminOrders from "./pages/AdminOrders";
 import EditProduct from "./pages/EditProduct";
+
+import UserProtectedRoute from "./components/UserProtectedRoute";
 
 function App() {
   const [products, setProducts] = useState([]);
@@ -51,9 +55,31 @@ function App() {
         <Route path="/shop" element={<Shop products={products} />} />
         <Route path="/product/:id" element={<ProductDetails />} />
         <Route path="/cart" element={<Cart />} />
-        <Route path="/checkout" element={<Checkout />} />
+
+        <Route
+          path="/checkout"
+          element={
+            <UserProtectedRoute>
+              <Checkout />
+            </UserProtectedRoute>
+          }
+        />
+
         <Route path="/order-success" element={<OrderSuccess />} />
         <Route path="/track-order" element={<TrackOrder />} />
+        <Route path="/login" element={<Login />} />
+        <Route path="/signup" element={<Signup />} />
+
+        <Route
+          path="/my-account"
+          element={
+            <UserProtectedRoute>
+              <div className="page">
+                <h2>My Account</h2>
+              </div>
+            </UserProtectedRoute>
+          }
+        />
 
         {/* Admin routes */}
         <Route path="/admin" element={<AdminLogin />} />

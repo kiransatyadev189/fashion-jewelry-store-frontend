@@ -1815,3 +1815,21 @@ button {
 .track-order-item:last-child {
   border-bottom: none;
 }
+.user-name {
+  margin-left: 10px;
+  font-weight: 600;
+}
+
+.logout-btn {
+  margin-left: 10px;
+  padding: 6px 10px;
+  border: none;
+  background: #111;
+  color: white;
+  border-radius: 6px;
+  cursor: pointer;
+}
+
+.logout-btn:hover {
+  background: #333;
+}

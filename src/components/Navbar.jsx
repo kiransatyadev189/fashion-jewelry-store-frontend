@@ -7,8 +7,19 @@ export default function Navbar() {
 
   const totalItems = cartItems.reduce((sum, item) => sum + item.quantity, 0);
 
+  const userToken = localStorage.getItem("userToken");
+  const userName = localStorage.getItem("userName");
+
   const handleCategoryClick = (category) => {
     navigate(`/shop?category=${encodeURIComponent(category)}`);
+  };
+
+  const handleLogout = () => {
+    localStorage.removeItem("userToken");
+    localStorage.removeItem("userName");
+    localStorage.removeItem("userEmail");
+    localStorage.removeItem("userRole");
+    navigate("/login");
   };
 
   return (
@@ -27,7 +38,6 @@ export default function Navbar() {
             <Link to="/">Home</Link>
             <Link to="/shop">Shop</Link>
 
-            {/* ✅ NEW: Tracking Page */}
             <Link to="/track-order">Track Order</Link>
 
             <Link to="/cart" className="cart-link">
@@ -35,6 +45,21 @@ export default function Navbar() {
             </Link>
 
             <Link to="/checkout">Checkout</Link>
+
+            {/* 🔐 USER AUTH SECTION */}
+            {!userToken ? (
+              <>
+                <Link to="/login">Login</Link>
+                <Link to="/signup">Sign Up</Link>
+              </>
+            ) : (
+              <>
+                <span className="user-name">Hi, {userName}</span>
+                <button className="logout-btn" onClick={handleLogout}>
+                  Logout
+                </button>
+              </>
+            )}
           </div>
         </div>
       </nav>
