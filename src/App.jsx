@@ -13,6 +13,7 @@ import TrackOrder from "./pages/TrackOrder";
 import Signup from "./pages/Signup";
 import Login from "./pages/Login";
 import ForgotPassword from "./pages/ForgotPassword";
+import ResetPassword from "./pages/ResetPassword";
 import MyAccount from "./pages/MyAccount";
 
 import AdminLogin from "./pages/AdminLogin";
@@ -71,6 +72,7 @@ function App() {
         <Route path="/login" element={<Login />} />
         <Route path="/signup" element={<Signup />} />
         <Route path="/forgot-password" element={<ForgotPassword />} />
+        <Route path="/reset-password" element={<ResetPassword />} />
 
         <Route
           path="/my-account"

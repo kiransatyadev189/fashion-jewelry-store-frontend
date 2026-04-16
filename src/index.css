@@ -2147,3 +2147,16 @@ button {
     width: 100%;
   }
 }
+.auth-form button {
+  background: #b76e79;
+  color: white;          /* 🔥 THIS FIXES IT */
+  border: none;
+  padding: 12px;
+  border-radius: 8px;
+  font-weight: 600;
+  cursor: pointer;
+}
+
+.auth-form button:hover {
+  background: #9f5c67;
+}
