@@ -4,37 +4,45 @@ import API_BASE_URL from "../api";
 export default function ForgotPassword() {
   const [email, setEmail] = useState("");
   const [message, setMessage] = useState("");
+  const [isError, setIsError] = useState(false);
   const [loading, setLoading] = useState(false);
 
   const handleSubmit = async (e) => {
     e.preventDefault();
     setMessage("");
+    setIsError(false);
 
-    // ✅ validation
     if (!email.trim()) {
       setMessage("Please enter your email address");
+      setIsError(true);
       return;
     }
 
     try {
       setLoading(true);
 
-      const res = await fetch(`${API_BASE_URL}/api/auth/forgot-password`, {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({ email }),
-      });
+      const res = await fetch(
+        `${API_BASE_URL}/api/auth/forgot-password?email=${encodeURIComponent(email)}`,
+        {
+          method: "POST",
+        }
+      );
 
-      // ✅ even if email not found → don't expose info (security best practice)
       if (!res.ok) {
-        throw new Error("Request failed");
+        const errorText = await res.text();
+        throw new Error(errorText || "Request failed");
       }
 
-      setMessage("If this email exists, a reset link has been sent.");
+      const responseText = await res.text();
+
+      setMessage(
+        responseText || "If this email exists, a reset link has been sent."
+      );
+      setIsError(false);
     } catch (err) {
+      console.error("Forgot password error:", err);
       setMessage("Unable to process request. Please try again.");
+      setIsError(true);
     } finally {
       setLoading(false);
     }
@@ -55,6 +63,7 @@ export default function ForgotPassword() {
             value={email}
             onChange={(e) => setEmail(e.target.value)}
             autoComplete="email"
+            required
           />
 
           <button type="submit" disabled={loading}>
@@ -62,7 +71,11 @@ export default function ForgotPassword() {
           </button>
         </form>
 
-        {message && <p className="auth-error">{message}</p>}
+        {message && (
+          <p className={isError ? "auth-error" : "auth-success"}>
+            {message}
+          </p>
+        )}
       </div>
     </div>
   );
