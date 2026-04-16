@@ -12,6 +12,8 @@ import OrderSuccess from "./pages/OrderSuccess";
 import TrackOrder from "./pages/TrackOrder";
 import Signup from "./pages/Signup";
 import Login from "./pages/Login";
+import ForgotPassword from "./pages/ForgotPassword";
+import MyAccount from "./pages/MyAccount";
 
 import AdminLogin from "./pages/AdminLogin";
 import AdminDashboard from "./pages/AdminDashboard";
@@ -50,7 +52,6 @@ function App() {
       {!isAdminPage && <Navbar />}
 
       <Routes>
-        {/* User routes */}
         <Route path="/" element={<Home products={products} />} />
         <Route path="/shop" element={<Shop products={products} />} />
         <Route path="/product/:id" element={<ProductDetails />} />
@@ -69,26 +70,23 @@ function App() {
         <Route path="/track-order" element={<TrackOrder />} />
         <Route path="/login" element={<Login />} />
         <Route path="/signup" element={<Signup />} />
+        <Route path="/forgot-password" element={<ForgotPassword />} />
 
         <Route
           path="/my-account"
           element={
             <UserProtectedRoute>
-              <div className="page">
-                <h2>My Account</h2>
-              </div>
+              <MyAccount />
             </UserProtectedRoute>
           }
         />
 
-        {/* Admin routes */}
         <Route path="/admin" element={<AdminLogin />} />
         <Route path="/admin/login" element={<AdminLogin />} />
         <Route path="/admin/dashboard" element={<AdminDashboard />} />
         <Route path="/admin/add-product" element={<AddProduct />} />
         <Route path="/admin/products" element={<AdminProducts />} />
         <Route path="/admin/orders" element={<AdminOrders />} />
-
         <Route
           path="/admin/edit/:id"
           element={

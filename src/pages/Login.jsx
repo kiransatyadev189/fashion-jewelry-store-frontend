@@ -72,6 +72,7 @@ export default function Login() {
             placeholder="Email Address"
             value={formData.email}
             onChange={handleChange}
+            autoComplete="email"
           />
 
           <input
@@ -80,7 +81,12 @@ export default function Login() {
             placeholder="Password"
             value={formData.password}
             onChange={handleChange}
+            autoComplete="current-password"
           />
+
+          <p className="forgot-password">
+            <Link to="/forgot-password">Forgot Password?</Link>
+          </p>
 
           <button type="submit" disabled={loading}>
             {loading ? "Logging in..." : "Login"}

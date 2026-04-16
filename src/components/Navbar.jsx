@@ -1,14 +1,27 @@
-import { Link, useNavigate } from "react-router-dom";
+import { Link, useNavigate, useLocation } from "react-router-dom";
 import { useCart } from "../context/CartContext";
+import { useEffect, useState } from "react";
 
 export default function Navbar() {
   const { cartItems } = useCart();
   const navigate = useNavigate();
+  const location = useLocation();
 
   const totalItems = cartItems.reduce((sum, item) => sum + item.quantity, 0);
 
-  const userToken = localStorage.getItem("userToken");
-  const userName = localStorage.getItem("userName");
+  const [auth, setAuth] = useState({
+    userToken: "",
+    userName: "",
+    userRole: "",
+  });
+
+  useEffect(() => {
+    setAuth({
+      userToken: localStorage.getItem("userToken") || "",
+      userName: localStorage.getItem("userName") || "",
+      userRole: localStorage.getItem("userRole") || "",
+    });
+  }, [location]);
 
   const handleCategoryClick = (category) => {
     navigate(`/shop?category=${encodeURIComponent(category)}`);
@@ -19,6 +32,13 @@ export default function Navbar() {
     localStorage.removeItem("userName");
     localStorage.removeItem("userEmail");
     localStorage.removeItem("userRole");
+
+    setAuth({
+      userToken: "",
+      userName: "",
+      userRole: "",
+    });
+
     navigate("/login");
   };
 
@@ -37,7 +57,6 @@ export default function Navbar() {
           <div className="nav-links">
             <Link to="/">Home</Link>
             <Link to="/shop">Shop</Link>
-
             <Link to="/track-order">Track Order</Link>
 
             <Link to="/cart" className="cart-link">
@@ -46,18 +65,28 @@ export default function Navbar() {
 
             <Link to="/checkout">Checkout</Link>
 
-            {/* 🔐 USER AUTH SECTION */}
-            {!userToken ? (
+            {!auth.userToken ? (
               <>
                 <Link to="/login">Login</Link>
-                <Link to="/signup">Sign Up</Link>
+                <Link to="/signup" className="signup-link">
+                  Sign Up
+                </Link>
               </>
             ) : (
               <>
-                <span className="user-name">Hi, {userName}</span>
+                <Link to="/my-account" className="user-name-link">
+                  Hi, {auth.userName || "User"}
+                </Link>
+
                 <button className="logout-btn" onClick={handleLogout}>
                   Logout
                 </button>
+
+                {auth.userRole === "ADMIN" && (
+                  <Link to="/admin/dashboard" className="admin-link">
+                    Admin
+                  </Link>
+                )}
               </>
             )}
           </div>
@@ -78,9 +107,7 @@ export default function Navbar() {
             Necklaces
           </button>
 
-          <button onClick={() => handleCategoryClick("Ring")}>
-            Rings
-          </button>
+          <button onClick={() => handleCategoryClick("Ring")}>Rings</button>
 
           <button onClick={() => handleCategoryClick("Bracelet")}>
             Bracelets
