@@ -26,9 +26,14 @@ export default function Navbar() {
           <div className="nav-links">
             <Link to="/">Home</Link>
             <Link to="/shop">Shop</Link>
+
+            {/* ✅ NEW: Tracking Page */}
+            <Link to="/track-order">Track Order</Link>
+
             <Link to="/cart" className="cart-link">
               Cart <span className="cart-badge">{totalItems}</span>
             </Link>
+
             <Link to="/checkout">Checkout</Link>
           </div>
         </div>
@@ -36,31 +41,31 @@ export default function Navbar() {
 
       <div className="category-scroll">
         <div className="category-scroll-inner">
-          <button type="button" onClick={() => handleCategoryClick("New Arrivals")}>
+          <button onClick={() => handleCategoryClick("New Arrivals")}>
             New Arrivals
           </button>
 
-          <button type="button" onClick={() => handleCategoryClick("Earring")}>
+          <button onClick={() => handleCategoryClick("Earring")}>
             Earrings
           </button>
 
-          <button type="button" onClick={() => handleCategoryClick("Necklace")}>
+          <button onClick={() => handleCategoryClick("Necklace")}>
             Necklaces
           </button>
 
-          <button type="button" onClick={() => handleCategoryClick("Ring")}>
+          <button onClick={() => handleCategoryClick("Ring")}>
             Rings
           </button>
 
-          <button type="button" onClick={() => handleCategoryClick("Bracelet")}>
+          <button onClick={() => handleCategoryClick("Bracelet")}>
             Bracelets
           </button>
 
-          <button type="button" onClick={() => handleCategoryClick("Daily Wear")}>
+          <button onClick={() => handleCategoryClick("Daily Wear")}>
             Daily Wear
           </button>
 
-          <button type="button" onClick={() => handleCategoryClick("Party Wear")}>
+          <button onClick={() => handleCategoryClick("Party Wear")}>
             Party Wear
           </button>
         </div>

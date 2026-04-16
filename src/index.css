@@ -1711,3 +1711,107 @@ button {
 .status-badge.cancelled {
   background: #dc2626;
 }
+.track-order-page {
+  padding: 40px 20px;
+  min-height: 80vh;
+  display: flex;
+  justify-content: center;
+  align-items: flex-start;
+}
+
+.track-order-container {
+  width: 100%;
+  max-width: 760px;
+  background: #ffffff;
+  border-radius: 18px;
+  padding: 28px;
+  box-shadow: 0 8px 30px rgba(0, 0, 0, 0.08);
+}
+
+.track-order-container h1 {
+  margin-bottom: 8px;
+  font-size: 32px;
+}
+
+.track-order-subtitle {
+  color: #666;
+  margin-bottom: 24px;
+  line-height: 1.6;
+}
+
+.track-order-form {
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+}
+
+.track-order-form input {
+  padding: 14px 16px;
+  border: 1px solid #ddd;
+  border-radius: 10px;
+  font-size: 15px;
+  outline: none;
+}
+
+.track-order-form input:focus {
+  border-color: #111;
+}
+
+.track-order-form button {
+  padding: 14px 18px;
+  border: none;
+  border-radius: 10px;
+  background: #111;
+  color: white;
+  font-size: 15px;
+  font-weight: 600;
+  cursor: pointer;
+}
+
+.track-order-form button:disabled {
+  opacity: 0.7;
+  cursor: not-allowed;
+}
+
+.track-order-error {
+  color: #dc2626;
+  margin-top: 16px;
+  font-weight: 500;
+}
+
+.track-order-result {
+  margin-top: 28px;
+  padding: 22px;
+  border: 1px solid #eee;
+  border-radius: 14px;
+  background: #fafafa;
+}
+
+.track-order-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 12px;
+  flex-wrap: wrap;
+  margin-bottom: 18px;
+}
+
+.track-order-items {
+  margin-top: 20px;
+}
+
+.track-order-items h3 {
+  margin-bottom: 12px;
+}
+
+.track-order-item {
+  display: flex;
+  justify-content: space-between;
+  gap: 12px;
+  padding: 10px 0;
+  border-bottom: 1px solid #eaeaea;
+}
+
+.track-order-item:last-child {
+  border-bottom: none;
+}
