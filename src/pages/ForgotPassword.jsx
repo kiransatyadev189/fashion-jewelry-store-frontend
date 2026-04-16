@@ -21,19 +21,21 @@ export default function ForgotPassword() {
     try {
       setLoading(true);
 
-      const res = await fetch(
-        `${API_BASE_URL}/api/auth/forgot-password?email=${encodeURIComponent(email)}`,
-        {
-          method: "POST",
-        }
-      );
-
-      if (!res.ok) {
-        const errorText = await res.text();
-        throw new Error(errorText || "Request failed");
-      }
+      const res = await fetch(`${API_BASE_URL}/api/auth/forgot-password`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          email: email,
+        }),
+      });
 
       const responseText = await res.text();
+
+      if (!res.ok) {
+        throw new Error(responseText || "Request failed");
+      }
 
       setMessage(
         responseText || "If this email exists, a reset link has been sent."
@@ -41,7 +43,7 @@ export default function ForgotPassword() {
       setIsError(false);
     } catch (err) {
       console.error("Forgot password error:", err);
-      setMessage("Unable to process request. Please try again.");
+      setMessage(err.message || "Unable to process request. Please try again.");
       setIsError(true);
     } finally {
       setLoading(false);
