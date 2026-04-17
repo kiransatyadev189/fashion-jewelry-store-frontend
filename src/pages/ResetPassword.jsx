@@ -11,6 +11,7 @@ export default function ResetPassword() {
   const [newPassword, setNewPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
   const [message, setMessage] = useState("");
+  const [isError, setIsError] = useState(false);
   const [loading, setLoading] = useState(false);
   const [validToken, setValidToken] = useState(null);
 
@@ -29,6 +30,7 @@ export default function ResetPassword() {
         const data = await res.json();
         setValidToken(!!data.valid);
       } catch (err) {
+        console.error("Token validation error:", err);
         setValidToken(false);
       }
     };
@@ -39,19 +41,23 @@ export default function ResetPassword() {
   const handleSubmit = async (e) => {
     e.preventDefault();
     setMessage("");
+    setIsError(false);
 
     if (!newPassword || !confirmPassword) {
       setMessage("Please fill all fields");
+      setIsError(true);
       return;
     }
 
     if (newPassword.length < 6) {
       setMessage("Password must be at least 6 characters");
+      setIsError(true);
       return;
     }
 
     if (newPassword !== confirmPassword) {
       setMessage("Passwords do not match");
+      setIsError(true);
       return;
     }
 
@@ -69,19 +75,22 @@ export default function ResetPassword() {
         }),
       });
 
-      const data = await res.json();
+      const text = await res.text();
 
       if (!res.ok) {
-        throw new Error(data.message || "Reset failed");
+        throw new Error(text || "Reset failed");
       }
 
-      setMessage("Password reset successful. Redirecting to login...");
+      setMessage(text || "Password reset successful. Redirecting to login...");
+      setIsError(false);
 
       setTimeout(() => {
         navigate("/login");
       }, 1500);
     } catch (err) {
+      console.error("Reset password error:", err);
       setMessage(err.message || "Unable to reset password");
+      setIsError(true);
     } finally {
       setLoading(false);
     }
@@ -142,7 +151,11 @@ export default function ResetPassword() {
           </button>
         </form>
 
-        {message && <p className="auth-error">{message}</p>}
+        {message && (
+          <p className={isError ? "auth-error" : "auth-success"}>
+            {message}
+          </p>
+        )}
       </div>
     </div>
   );

@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
 import { Routes, Route, useLocation } from "react-router-dom";
 import axios from "axios";
+import API_BASE_URL from "./api";
 
 import Navbar from "./components/Navbar";
 import Home from "./pages/Home";
@@ -28,9 +29,6 @@ import UserProtectedRoute from "./components/UserProtectedRoute";
 function App() {
   const [products, setProducts] = useState([]);
   const location = useLocation();
-
-  const API_BASE_URL =
-    import.meta.env.VITE_API_BASE_URL || "http://localhost:8080";
 
   const isAdminPage = location.pathname.startsWith("/admin");
 
