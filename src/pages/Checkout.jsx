@@ -58,17 +58,18 @@ export default function Checkout() {
 
     try {
       const orderData = {
-        customerName: fullName,
-        email: email,
-        address: `${address}, ${city}, ${state} - ${pincode}`,
-        totalAmount: totalAmount,
-        items: cartItems.map((item) => ({
-          productId: item.id,
-          productName: item.name,
-          price: Number(item.price),
-          quantity: item.quantity,
-        })),
-      };
+  customerName: fullName,
+  email: localStorage.getItem("userEmail") || email,
+  address: `${address}, ${city}, ${state} - ${pincode}`,
+  totalAmount: totalAmount,
+  items: cartItems.map((item) => ({
+    productId: item.id,
+    productName: item.name,
+    price: Number(item.price),
+    quantity: item.quantity,
+    imageUrl: item.imageUrl
+  })),
+};
 
       console.log("Sending order:", orderData);
 

@@ -2160,3 +2160,327 @@ button {
 .auth-form button:hover {
   background: #9f5c67;
 }
+/* ================================
+   MY ORDERS PAGE - PREMIUM MOBILE FIRST
+================================ */
+
+.my-orders-page {
+  width: 100%;
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 18px 14px 40px;
+}
+
+.my-orders-page h1 {
+  margin: 0;
+  font-size: 2rem;
+  line-height: 1.1;
+  color: #2f1e1e;
+  font-weight: 700;
+  letter-spacing: -0.02em;
+}
+
+.my-orders-subtext {
+  margin: 10px 0 22px;
+  color: #7c6a6a;
+  font-size: 0.98rem;
+  line-height: 1.6;
+}
+
+.my-orders-empty {
+  background: linear-gradient(180deg, #fffdfc 0%, #fff7f3 100%);
+  border: 1px solid #f0dfd7;
+  border-radius: 20px;
+  padding: 28px 18px;
+  text-align: center;
+  color: #6b5555;
+  box-shadow: 0 8px 24px rgba(48, 28, 28, 0.06);
+}
+
+.my-orders-list {
+  display: flex;
+  flex-direction: column;
+  gap: 18px;
+}
+
+.my-order-card {
+  background: linear-gradient(180deg, #ffffff 0%, #fffaf7 100%);
+  border: 1px solid #efdfd8;
+  border-radius: 22px;
+  padding: 18px 14px;
+  box-shadow:
+    0 10px 30px rgba(44, 26, 26, 0.07),
+    0 2px 8px rgba(44, 26, 26, 0.04);
+  transition: transform 0.25s ease, box-shadow 0.25s ease;
+}
+
+.my-order-card:hover {
+  transform: translateY(-2px);
+  box-shadow:
+    0 16px 36px rgba(44, 26, 26, 0.09),
+    0 4px 12px rgba(44, 26, 26, 0.06);
+}
+
+.my-order-top {
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+  margin-bottom: 16px;
+}
+
+.my-order-top h2 {
+  margin: 0 0 10px;
+  font-size: 1.25rem;
+  color: #2f1e1e;
+  font-weight: 700;
+}
+
+.my-order-top p {
+  margin: 6px 0;
+  color: #5d4a4a;
+  font-size: 0.95rem;
+  line-height: 1.5;
+}
+
+.my-order-top strong {
+  color: #2c1b1b;
+  font-weight: 600;
+}
+
+.my-order-address {
+  background: #fff;
+  border: 1px solid #f1e3dc;
+  border-radius: 16px;
+  padding: 14px 14px;
+  margin-bottom: 16px;
+}
+
+.my-order-address strong {
+  display: inline-block;
+  margin-bottom: 6px;
+  color: #2f1e1e;
+  font-size: 0.95rem;
+}
+
+.my-order-address p {
+  margin: 0;
+  color: #685757;
+  line-height: 1.6;
+  font-size: 0.94rem;
+}
+
+.my-order-items {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.my-order-item {
+  display: flex;
+  align-items: flex-start;
+  gap: 12px;
+  background: #fff;
+  border: 1px solid #f1e3dc;
+  border-radius: 16px;
+  padding: 14px;
+  transition: border-color 0.2s ease, transform 0.2s ease;
+}
+
+.my-order-item:hover {
+  border-color: #e5cdbf;
+  transform: translateY(-1px);
+}
+
+.my-order-item-info {
+  width: 100%;
+  min-width: 0;
+}
+
+.my-order-item-info h4 {
+  margin: 0 0 8px;
+  font-size: 1rem;
+  color: #2d1d1d;
+  font-weight: 700;
+  line-height: 1.4;
+  word-break: break-word;
+}
+
+.my-order-item-info p {
+  margin: 4px 0;
+  color: #6f5d5d;
+  font-size: 0.93rem;
+  line-height: 1.5;
+}
+
+.cancel-order-btn {
+  width: 100%;
+  border: none;
+  outline: none;
+  border-radius: 14px;
+  padding: 12px 16px;
+  font-size: 0.95rem;
+  font-weight: 600;
+  cursor: pointer;
+  background: linear-gradient(135deg, #2d1b1b 0%, #5a3636 100%);
+  color: #fff;
+  box-shadow: 0 8px 18px rgba(54, 28, 28, 0.18);
+  transition: transform 0.2s ease, box-shadow 0.2s ease, opacity 0.2s ease;
+}
+
+.cancel-order-btn:hover {
+  transform: translateY(-1px);
+  box-shadow: 0 12px 24px rgba(54, 28, 28, 0.22);
+}
+
+.cancel-order-btn:active {
+  transform: translateY(0);
+}
+
+.cancel-order-btn:disabled {
+  opacity: 0.7;
+  cursor: not-allowed;
+  transform: none;
+  box-shadow: 0 6px 14px rgba(54, 28, 28, 0.14);
+}
+
+/* Optional status badge style if you later wrap status in a span */
+.order-status-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 7px 12px;
+  border-radius: 999px;
+  font-size: 0.83rem;
+  font-weight: 700;
+  letter-spacing: 0.01em;
+}
+
+.order-status-badge.pending {
+  background: #fff6dc;
+  color: #9a6a00;
+}
+
+.order-status-badge.confirmed {
+  background: #e8f7eb;
+  color: #217a38;
+}
+
+.order-status-badge.shipped {
+  background: #e9f2ff;
+  color: #225ea8;
+}
+
+.order-status-badge.out-for-delivery {
+  background: #efe9ff;
+  color: #5b34a8;
+}
+
+.order-status-badge.delivered {
+  background: #e5f8ee;
+  color: #177245;
+}
+
+.order-status-badge.cancelled {
+  background: #ffe9e9;
+  color: #b42318;
+}
+
+/* Better auth error if reused */
+.auth-error {
+  margin: 0 0 16px;
+  background: #fff1f1;
+  color: #b42318;
+  border: 1px solid #f3c7c7;
+  border-radius: 14px;
+  padding: 12px 14px;
+  font-size: 0.94rem;
+  line-height: 1.5;
+}
+
+/* ================================
+   TABLET
+================================ */
+
+@media (min-width: 768px) {
+  .my-orders-page {
+    padding: 28px 22px 56px;
+  }
+
+  .my-orders-page h1 {
+    font-size: 2.4rem;
+  }
+
+  .my-orders-subtext {
+    font-size: 1rem;
+    margin-bottom: 26px;
+  }
+
+  .my-order-card {
+    padding: 22px 20px;
+    border-radius: 24px;
+  }
+
+  .my-order-top {
+    flex-direction: row;
+    align-items: flex-start;
+    justify-content: space-between;
+    gap: 22px;
+  }
+
+  .my-order-top h2 {
+    font-size: 1.45rem;
+  }
+
+  .cancel-order-btn {
+    width: auto;
+    min-width: 170px;
+    padding: 12px 18px;
+    align-self: flex-start;
+  }
+
+  .my-order-item {
+    padding: 16px;
+    border-radius: 18px;
+  }
+
+  .my-order-item-info h4 {
+    font-size: 1.04rem;
+  }
+}
+
+/* ================================
+   DESKTOP
+================================ */
+
+@media (min-width: 1024px) {
+  .my-orders-page {
+    padding: 36px 24px 70px;
+  }
+
+  .my-orders-page h1 {
+    font-size: 2.8rem;
+  }
+
+  .my-orders-subtext {
+    font-size: 1.05rem;
+    margin-bottom: 30px;
+  }
+
+  .my-orders-list {
+    gap: 22px;
+  }
+
+  .my-order-card {
+    padding: 24px 22px;
+  }
+
+  .my-order-top h2 {
+    font-size: 1.55rem;
+  }
+
+  .my-order-top p,
+  .my-order-address p,
+  .my-order-item-info p {
+    font-size: 0.96rem;
+  }
+}

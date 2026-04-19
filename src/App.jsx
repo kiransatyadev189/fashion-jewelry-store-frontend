@@ -16,6 +16,7 @@ import Login from "./pages/Login";
 import ForgotPassword from "./pages/ForgotPassword";
 import ResetPassword from "./pages/ResetPassword";
 import MyAccount from "./pages/MyAccount";
+import MyOrders from "./pages/MyOrders";
 
 import AdminLogin from "./pages/AdminLogin";
 import AdminDashboard from "./pages/AdminDashboard";
@@ -77,6 +78,15 @@ function App() {
           element={
             <UserProtectedRoute>
               <MyAccount />
+            </UserProtectedRoute>
+          }
+        />
+
+        <Route
+          path="/my-orders"
+          element={
+            <UserProtectedRoute>
+              <MyOrders />
             </UserProtectedRoute>
           }
         />

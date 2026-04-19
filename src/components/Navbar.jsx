@@ -42,6 +42,9 @@ export default function Navbar() {
     navigate("/login");
   };
 
+  const isAdmin =
+    auth.userRole === "ADMIN" || auth.userRole === "ROLE_ADMIN";
+
   return (
     <>
       <div className="top-strip">
@@ -74,6 +77,8 @@ export default function Navbar() {
               </>
             ) : (
               <>
+                <Link to="/my-orders">My Orders</Link>
+
                 <Link to="/my-account" className="user-name-link">
                   Hi, {auth.userName || "User"}
                 </Link>
@@ -82,7 +87,7 @@ export default function Navbar() {
                   Logout
                 </button>
 
-                {auth.userRole === "ADMIN" && (
+                {isAdmin && (
                   <Link to="/admin/dashboard" className="admin-link">
                     Admin
                   </Link>

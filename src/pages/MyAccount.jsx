@@ -63,6 +63,10 @@ export default function MyAccount() {
         </div>
 
         <div className="account-actions">
+          <Link to="/my-orders" className="account-btn secondary">
+            My Orders
+          </Link>
+
           <Link to="/track-order" className="account-btn secondary">
             Track Order
           </Link>
