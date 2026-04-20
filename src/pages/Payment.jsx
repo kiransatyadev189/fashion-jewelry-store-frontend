@@ -11,6 +11,23 @@ export default function Payment() {
   const { orderData } = location.state || {};
   const [loading, setLoading] = useState(false);
 
+  const loadScript = () => {
+    return new Promise((resolve) => {
+      if (document.getElementById("razorpay-checkout-script")) {
+        resolve(true);
+        return;
+      }
+
+      const script = document.createElement("script");
+      script.id = "razorpay-checkout-script";
+      script.src = "https://checkout.razorpay.com/v1/checkout.js";
+      script.onload = () => resolve(true);
+      script.onerror = () => resolve(false);
+
+      document.body.appendChild(script);
+    });
+  };
+
   if (!orderData) {
     return (
       <div className="payment-page">
@@ -27,6 +44,14 @@ export default function Payment() {
   const loadRazorpayCheckout = async () => {
     try {
       setLoading(true);
+
+      const loaded = await loadScript();
+
+      if (!loaded) {
+        alert("Razorpay SDK failed to load");
+        setLoading(false);
+        return;
+      }
 
       if (!window.Razorpay) {
         throw new Error(
@@ -59,6 +84,7 @@ export default function Payment() {
         name: "LuxeGlow Jewelry",
         description: "Secure payment for your order",
         order_id: paymentOrder.razorpayOrderId,
+
         handler: async function (response) {
           try {
             const verifyRes = await fetch(`${API_BASE_URL}/api/payments/verify`, {
@@ -94,14 +120,40 @@ export default function Payment() {
             setLoading(false);
           }
         },
+
         prefill: {
           name: paymentOrder.customerName,
           email: paymentOrder.email,
-          contact: "",
+          contact: orderData.contact || "",
         },
+
         theme: {
           color: "#7a2e4d",
         },
+
+        config: {
+          display: {
+            blocks: {
+              upi: {
+                name: "Pay via UPI",
+                instruments: [{ method: "upi" }],
+              },
+              other: {
+                name: "Other Options",
+                instruments: [
+                  { method: "card" },
+                  { method: "netbanking" },
+                  { method: "wallet" },
+                ],
+              },
+            },
+            sequence: ["block.upi", "block.other"],
+            preferences: {
+              show_default_blocks: true,
+            },
+          },
+        },
+
         modal: {
           ondismiss: function () {
             setLoading(false);
