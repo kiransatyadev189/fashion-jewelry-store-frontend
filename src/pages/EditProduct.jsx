@@ -19,8 +19,9 @@ export default function EditProduct({ fetchProducts, apiBaseUrl }) {
   const categories = ["Ring", "Necklace", "Earring", "Bracelet", "Anklet"];
 
   useEffect(() => {
-    const isAdminLoggedIn = localStorage.getItem("adminAuth");
-    if (!isAdminLoggedIn) {
+    const adminToken = localStorage.getItem("adminToken");
+
+    if (!adminToken) {
       navigate("/admin");
       return;
     }
@@ -82,6 +83,13 @@ export default function EditProduct({ fetchProducts, apiBaseUrl }) {
     try {
       setLoading(true);
 
+      const adminToken = localStorage.getItem("adminToken");
+
+      if (!adminToken) {
+        alert("Admin not logged in.");
+        return;
+      }
+
       const data = new FormData();
       data.append("name", formData.name);
       data.append("description", formData.description);
@@ -94,11 +102,15 @@ export default function EditProduct({ fetchProducts, apiBaseUrl }) {
 
       const res = await fetch(`${apiBaseUrl}/api/products/${id}`, {
         method: "PUT",
+        headers: {
+          Authorization: `Bearer ${adminToken}`,
+        },
         body: data,
       });
 
       if (!res.ok) {
-        throw new Error("Failed to update product");
+        const text = await res.text();
+        throw new Error(text || "Failed to update product");
       }
 
       alert("Product updated successfully.");
