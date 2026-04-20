@@ -1,11 +1,10 @@
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { useCart } from "../context/CartContext";
-import API_BASE_URL from "../api";
 
 export default function Checkout() {
   const navigate = useNavigate();
-  const { cartItems, clearCart } = useCart();
+  const { cartItems } = useCart();
 
   const [formData, setFormData] = useState({
     fullName: "",
@@ -56,48 +55,26 @@ export default function Checkout() {
       return;
     }
 
-    try {
-      const orderData = {
-  customerName: fullName,
-  email: localStorage.getItem("userEmail") || email,
-  address: `${address}, ${city}, ${state} - ${pincode}`,
-  totalAmount: totalAmount,
-  items: cartItems.map((item) => ({
-    productId: item.id,
-    productName: item.name,
-    price: Number(item.price),
-    quantity: item.quantity,
-    imageUrl: item.imageUrl
-  })),
-};
+    const orderData = {
+      customerName: fullName,
+      email: localStorage.getItem("userEmail") || email,
+      address: `${address}, ${city}, ${state} - ${pincode}`,
+      totalAmount: totalAmount,
+      items: cartItems.map((item) => ({
+        productId: item.id,
+        productName: item.name,
+        price: Number(item.price),
+        quantity: item.quantity,
+        imageUrl: item.imageUrl,
+      })),
+    };
 
-      console.log("Sending order:", orderData);
-
-      const res = await fetch(`${API_BASE_URL}/api/orders`, {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify(orderData),
-      });
-
-      if (!res.ok) {
-        const text = await res.text();
-        throw new Error(text || "Order failed");
-      }
-
-      const data = await res.json();
-      console.log("Order saved:", data);
-
-      clearCart();
-
-      navigate("/order-success", {
-        state: { orderId: data.id },
-      });
-    } catch (err) {
-      console.error("Order error:", err);
-      alert("Failed to place order: " + err.message);
-    }
+    navigate("/payment", {
+      state: {
+        orderData,
+        paymentMethod: formData.paymentMethod,
+      },
+    });
   };
 
   return (
@@ -215,7 +192,7 @@ export default function Checkout() {
             </div>
 
             <button type="submit" className="place-order-btn">
-              Place Order
+              Proceed to Payment
             </button>
           </form>
 

@@ -9,6 +9,7 @@ import Shop from "./pages/Shop";
 import ProductDetails from "./pages/ProductDetails";
 import Cart from "./pages/Cart";
 import Checkout from "./pages/Checkout";
+import Payment from "./pages/Payment";
 import OrderSuccess from "./pages/OrderSuccess";
 import TrackOrder from "./pages/TrackOrder";
 import Signup from "./pages/Signup";
@@ -62,6 +63,15 @@ function App() {
           element={
             <UserProtectedRoute>
               <Checkout />
+            </UserProtectedRoute>
+          }
+        />
+
+        <Route
+          path="/payment"
+          element={
+            <UserProtectedRoute>
+              <Payment />
             </UserProtectedRoute>
           }
         />
