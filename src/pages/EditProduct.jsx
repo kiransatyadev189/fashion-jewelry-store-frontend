@@ -100,7 +100,7 @@ export default function EditProduct({ fetchProducts, apiBaseUrl }) {
         data.append("image", newImage);
       }
 
-      const res = await fetch(`${apiBaseUrl}/api/products/${id}`, {
+       const res = await fetch(`${apiBaseUrl}/api/products/${id}/with-image`, {
         method: "PUT",
         headers: {
           Authorization: `Bearer ${adminToken}`,
